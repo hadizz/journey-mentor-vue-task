@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/vue-query'
 
 const defaultParams = {
   fields: {
+    cca3: true,
     name: true,
     flags: true,
     capital: true,
@@ -52,7 +53,7 @@ export function useCountriesCache() {
     queryClient.setQueryData(COUNTRIES_QUERY_KEYS.list(params), data)
   }
 
-  const getCountriesData = (params: Record<string, any> = {}) => {
+  const getCountriesData = (params: Partial<GetAllCountriesParams> = defaultParams) => {
     return queryClient.getQueryData<Country[]>(COUNTRIES_QUERY_KEYS.list(params))
   }
 

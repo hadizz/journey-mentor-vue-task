@@ -10,6 +10,12 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/country/:cca3',
+      name: 'country-detail',
+      component: () => import('../views/CountryDetailView.vue'),
+      props: true,
+    },
+    {
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue'),

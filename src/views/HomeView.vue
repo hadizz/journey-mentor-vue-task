@@ -42,8 +42,9 @@ const {
       <p>No countries found matching "{{ searchTerm }}"</p>
     </div>
     <ul v-else>
-      <li v-for="country in visibleCountries" :key="country.name">
+      <li v-for="country in visibleCountries" :key="country.cca3">
         <CountryCard
+          :cca3="country.cca3"
           :name="country.name"
           :flag="country.flag"
           :population="country.population"

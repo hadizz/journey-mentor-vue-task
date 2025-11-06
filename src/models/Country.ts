@@ -1,4 +1,5 @@
 export interface Country {
+  cca3: string
   flag: string
   name: string
   capital: string
