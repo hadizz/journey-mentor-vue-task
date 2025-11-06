@@ -12,13 +12,11 @@ export function useUrlSync(query: Ref<string>, region: Ref<string>, options: Url
   const router = useRouter()
   const route = useRoute()
 
-  // Create debounced versions of the reactive values
   const { debouncedValue: debouncedQuery } = useDebounce(query, debounceMs)
   const { debouncedValue: debouncedRegion } = useDebounce(region, debounceMs)
 
   const isInitialized = ref(false)
 
-  // Initialize filters from URL on mount
   const initializeFromUrl = () => {
     const urlQuery = (route.query.query as string) || ''
     const urlRegion = (route.query.region as string) || ''
@@ -28,7 +26,6 @@ export function useUrlSync(query: Ref<string>, region: Ref<string>, options: Url
     isInitialized.value = true
   }
 
-  // Update URL when filters change (debounced)
   const updateUrl = (newQuery: string, newRegion: string) => {
     if (!isInitialized.value) return
 
@@ -42,7 +39,6 @@ export function useUrlSync(query: Ref<string>, region: Ref<string>, options: Url
       queryParams.region = newRegion.trim()
     }
 
-    // Only update URL if there's actually a change
     const currentQuery = (route.query.query as string) || ''
     const currentRegion = (route.query.region as string) || ''
 
@@ -59,12 +55,10 @@ export function useUrlSync(query: Ref<string>, region: Ref<string>, options: Url
     })
   }
 
-  // Watch for changes in debounced values and update URL
   watch([debouncedQuery, debouncedRegion], ([newQuery, newRegion]) => {
     updateUrl(newQuery, newRegion)
   })
 
-  // Watch for route changes (browser back/forward navigation)
   watch(
     () => route.query,
     (newQuery) => {
@@ -73,7 +67,6 @@ export function useUrlSync(query: Ref<string>, region: Ref<string>, options: Url
       const urlQuery = (newQuery.query as string) || ''
       const urlRegion = (newQuery.region as string) || ''
 
-      // Only update if the URL values are different from current values
       if (query.value !== urlQuery || region.value !== urlRegion) {
         query.value = urlQuery
         region.value = urlRegion

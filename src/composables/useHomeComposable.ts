@@ -7,20 +7,24 @@ import { useUrlSync } from './useUrlSync'
 
 export function useHomeComposable(pageSize: number = 10) {
   const { data: countries, isLoading, error, refetch } = useCountries()
-  //   const filterStore = useCountriesFilterStore()
 
   const safeCountries = computed(() => countries.value || [])
 
   const searchTerm = ref('')
   const region = ref('')
 
-  // Set up URL synchronization
   const { initializeFromUrl } = useUrlSync(searchTerm, region, {
     debounceMs: 300,
     replaceHistory: false,
   })
 
-  const { filteredCountries, isSearching } = useSearch(searchTerm, safeCountries, region)
+  const { filteredCountries, isSearching } = useSearch(
+    searchTerm,
+    safeCountries,
+    region,
+    300,
+    isLoading,
+  )
 
   const {
     visibleItems: visibleCountries,
@@ -34,12 +38,10 @@ export function useHomeComposable(pageSize: number = 10) {
     rootMargin: '0px 0px 200px 0px',
   })
 
-  // Initialize from URL on mount
   onMounted(() => {
     initializeFromUrl()
   })
 
-  // Actions
   const handleRetry = () => {
     refetch()
   }

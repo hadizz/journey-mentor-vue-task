@@ -8,21 +8,26 @@ export function useSearch(
   countries: Ref<Country[]>,
   region: Ref<string>,
   debounceMs: number = 300,
+  isLoading?: Ref<boolean>,
 ) {
   const { debouncedValue: debouncedSearchTerm } = useDebounce(searchTerm, debounceMs)
   const filterStore = useCountriesFilterStore()
 
   const filteredCountries = computed(() => {
+    const loading = isLoading?.value === true
+
+    if (loading) {
+      return []
+    }
+
     const allCountries = countries.value || []
     const searchQuery = debouncedSearchTerm.value?.trim() || ''
     const selectedRegion = region.value?.trim() || ''
 
-    // If no filters are applied, return all countries (don't cache this)
     if (!searchQuery && !selectedRegion) {
       return allCountries
     }
 
-    // Check cache first for filtered results
     const cachedResults = filterStore.getCachedResult(searchQuery, selectedRegion)
     if (cachedResults !== null) {
       return cachedResults
@@ -38,6 +43,7 @@ export function useSearch(
 
     // If no search term, return region-filtered results
     if (!searchQuery) {
+      // Only cache when data is loaded and present
       filterStore.setCachedResult(searchQuery, selectedRegion, regionFilteredCountries)
       return regionFilteredCountries
     }
@@ -51,7 +57,6 @@ export function useSearch(
       return nameMatch || capitalMatch || regionMatch
     })
 
-    // Cache the results
     filterStore.setCachedResult(searchQuery, selectedRegion, filteredResults)
 
     return filteredResults

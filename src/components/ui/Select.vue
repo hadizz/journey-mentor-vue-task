@@ -137,9 +137,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 }
 
 const handleBlur = (event: FocusEvent) => {
-  // Delay blur handling to allow click events to process first
   setTimeout(() => {
-    // Check if the new focus target is within our component
     const relatedTarget = event.relatedTarget as HTMLElement
     if (!selectRef.value?.contains(relatedTarget) && !dropdownRef.value?.contains(relatedTarget)) {
       isOpen.value = false
@@ -154,7 +152,6 @@ const handleFocus = (event: FocusEvent) => {
 }
 
 const handleClickOutside = (event: MouseEvent) => {
-  // Use setTimeout to allow option click handlers to execute first
   setTimeout(() => {
     const target = event.target as HTMLElement
     if (!selectRef.value?.contains(target) && !dropdownRef.value?.contains(target)) {

@@ -33,7 +33,6 @@ export const useCountriesFilterStore = defineStore('countriesFilter', () => {
       return null
     }
 
-    // Optional: Add cache expiration (e.g., 5 minutes)
     const isExpired = Date.now() - cached.timestamp > 5 * 60 * 1000
     if (isExpired) {
       cache.value.delete(cacheKey)
