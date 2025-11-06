@@ -1,7 +1,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type ComputedRef, type Ref } from 'vue'
 
 interface UseLoadMoreOptions<T> {
-  items: Ref<T[] | undefined>
+  items?: Ref<T[]>
   pageSize?: number
   isLoading?: Ref<boolean>
   error?: Ref<unknown | null>
@@ -29,7 +29,7 @@ export function useLoadMore<T>({
   const observer = ref<IntersectionObserver | null>(null)
 
   const visibleItems = computed<T[]>(() => {
-    const list = items.value ?? []
+    const list = items?.value ?? []
     if (list.length <= visibleCount.value) {
       return list.slice()
     }
@@ -37,18 +37,18 @@ export function useLoadMore<T>({
   })
 
   const hasMore = computed(() => {
-    const total = items.value?.length ?? 0
+    const total = items?.value?.length ?? 0
     return total > visibleCount.value
   })
 
   const loadMore = () => {
     if (!hasMore.value) return
-    const total = items.value?.length ?? 0
+    const total = items?.value?.length ?? 0
     visibleCount.value = Math.min(visibleCount.value + pageSize, total)
   }
 
   const reset = () => {
-    const total = items.value?.length ?? 0
+    const total = items?.value?.length ?? 0
     visibleCount.value = Math.min(pageSize, total || pageSize)
   }
 
@@ -92,7 +92,7 @@ export function useLoadMore<T>({
   )
 
   watch(
-    items,
+    () => items?.value ?? [],
     () => {
       reset()
     },

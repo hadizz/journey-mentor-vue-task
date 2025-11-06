@@ -5,23 +5,19 @@ import { useLoadMore } from './useLoadMore'
 import { useSearch } from './useSearch'
 
 export function useHomeComposable(pageSize: number = 10) {
-  // Countries data
   const { data: countries, isLoading, error, refetch } = useCountries()
 
-  // Ensure countries is always an array
   const safeCountries = computed(() => countries.value || [])
 
-  // Search functionality
   const searchTerm = ref('')
   const { filteredCountries, isSearching } = useSearch(searchTerm, safeCountries)
 
-  // Load more functionality
   const {
     visibleItems: visibleCountries,
     hasMore,
     loadMoreTrigger,
   } = useLoadMore<Country>({
-    items: filteredCountries,
+    items: computed(() => filteredCountries.value.filter(Boolean) as Country[]),
     pageSize,
     isLoading,
     error,
@@ -34,23 +30,14 @@ export function useHomeComposable(pageSize: number = 10) {
   }
 
   return {
-    // Search
     searchTerm,
     isSearching,
-
-    // Countries data
     countries: filteredCountries,
     visibleCountries,
-
-    // Loading states
     loading: isLoading,
     error,
-
-    // Load more
     hasMore,
     loadMoreTrigger,
-
-    // Actions
     handleRetry,
   }
 }

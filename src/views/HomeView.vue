@@ -55,17 +55,7 @@ const {
 
 <style scoped>
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 0px;
-}
-
-.container h1 {
-  text-align: center;
-  margin-bottom: 32px;
-  color: #2c3e50;
-  font-size: 2.5rem;
-  font-weight: 600;
 }
 
 .search-field {

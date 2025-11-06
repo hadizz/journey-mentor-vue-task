@@ -1,4 +1,5 @@
 import type { Country } from '@/models/Country'
+import { useSearchCacheStore } from '@/stores/searchCache'
 import { computed, type Ref } from 'vue'
 import { useDebounce } from './useDebounce'
 
@@ -8,8 +9,8 @@ export function useSearch(
   debounceMs: number = 300,
 ) {
   const { debouncedValue: debouncedSearchTerm } = useDebounce(searchTerm, debounceMs)
+  const searchCache = useSearchCacheStore()
 
-  // Filter countries based on the debounced search term
   const filteredCountries = computed(() => {
     const allCountries = countries.value || []
 
@@ -17,14 +18,30 @@ export function useSearch(
       return allCountries
     }
 
-    const searchLower = debouncedSearchTerm.value.trim().toLowerCase()
+    const searchQuery = debouncedSearchTerm.value.trim().toLowerCase()
 
-    return allCountries.filter((country) => {
-      const nameMatch = country.name.toLowerCase().includes(searchLower)
-      const capitalMatch = country.capital?.toLowerCase().includes(searchLower)
-      const regionMatch = country.region?.toLowerCase().includes(searchLower)
-      return nameMatch || capitalMatch || regionMatch
+    const cachedIndices = searchCache.getCachedResult(searchQuery)
+    if (cachedIndices !== null) {
+      return cachedIndices.map((index) => allCountries[index]).filter(Boolean)
+    }
+
+    const matchingIndices: number[] = []
+    const filteredResults = allCountries.filter((country, index) => {
+      const nameMatch = country.name?.toLowerCase().includes(searchQuery)
+      const capitalMatch = country.capital?.toLowerCase().includes(searchQuery)
+      const regionMatch = country.region?.toLowerCase().includes(searchQuery)
+      const isMatch = nameMatch || capitalMatch || regionMatch
+
+      if (isMatch) {
+        matchingIndices.push(index)
+      }
+
+      return isMatch
     })
+
+    searchCache.setCachedResult(searchQuery, matchingIndices)
+
+    return filteredResults
   })
 
   const isSearching = computed(() => {
