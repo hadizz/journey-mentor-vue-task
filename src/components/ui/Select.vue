@@ -59,6 +59,8 @@ const isPlaceholder = computed(() => {
 })
 
 const toggleDropdown = () => {
+  console.log('toggleDropdown')
+
   if (props.disabled) return
   isOpen.value = !isOpen.value
   if (isOpen.value) {
@@ -69,6 +71,8 @@ const toggleDropdown = () => {
 }
 
 const selectOption = (option: SelectOption) => {
+  console.log('selectOption')
+
   if (props.disabled) return
   emit('update:modelValue', option.value)
   emit('change', option.value)
@@ -122,25 +126,35 @@ const handleKeydown = (event: KeyboardEvent) => {
 }
 
 const handleBlur = (event: FocusEvent) => {
-  // Check if the new focus target is within our component
-  const relatedTarget = event.relatedTarget as HTMLElement
-  if (!selectRef.value?.contains(relatedTarget) && !dropdownRef.value?.contains(relatedTarget)) {
-    isOpen.value = false
-    focusedIndex.value = -1
-    emit('blur', event)
-  }
+  console.log('handleBlur')
+
+  // Delay blur handling to allow click events to process first
+  setTimeout(() => {
+    // Check if the new focus target is within our component
+    const relatedTarget = event.relatedTarget as HTMLElement
+    if (!selectRef.value?.contains(relatedTarget) && !dropdownRef.value?.contains(relatedTarget)) {
+      isOpen.value = false
+      focusedIndex.value = -1
+      emit('blur', event)
+    }
+  }, 150)
 }
 
 const handleFocus = (event: FocusEvent) => {
+  console.log('handleFocus')
+
   emit('focus', event)
 }
 
 const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement
-  if (!selectRef.value?.contains(target) && !dropdownRef.value?.contains(target)) {
-    isOpen.value = false
-    focusedIndex.value = -1
-  }
+  // Use setTimeout to allow option click handlers to execute first
+  setTimeout(() => {
+    const target = event.target as HTMLElement
+    if (!selectRef.value?.contains(target) && !dropdownRef.value?.contains(target)) {
+      isOpen.value = false
+      focusedIndex.value = -1
+    }
+  }, 100)
 }
 
 const focus = () => {
@@ -237,7 +251,8 @@ defineExpose({
           }"
           role="option"
           :aria-selected="option.value === modelValue"
-          @click="selectOption(option)"
+          @mousedown.prevent
+          @click.stop="selectOption(option)"
           @mouseenter="focusedIndex = index"
         >
           {{ option.label }}

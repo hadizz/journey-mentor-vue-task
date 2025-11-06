@@ -3,12 +3,13 @@ import CountryCard from '@/components/CountryCard.vue'
 import Select from '@/components/ui/Select.vue'
 import TextField from '@/components/ui/TextField.vue'
 import { useHomeComposable } from '@/composables/useHomeComposable'
-import { ref } from 'vue'
+import { REGIONS } from '@/constants/country'
 
 const PAGE_SIZE = 10
 
 const {
   searchTerm,
+  region,
   isSearching,
   countries,
   visibleCountries,
@@ -18,15 +19,6 @@ const {
   loadMoreTrigger,
   handleRetry,
 } = useHomeComposable(PAGE_SIZE)
-
-const region = ref('')
-const regions = ref([
-  { value: 'africa', label: 'Africa' },
-  { value: 'asia', label: 'Asia' },
-  { value: 'europe', label: 'Europe' },
-  { value: 'north-america', label: 'North America' },
-  { value: 'south-america', label: 'South America' },
-])
 </script>
 
 <template>
@@ -37,7 +29,7 @@ const regions = ref([
         placeholder="Select a region"
         v-model="region"
         class="select-field"
-        :options="regions"
+        :options="REGIONS"
       />
     </div>
     <div v-if="loading" class="loading">Loading countries...</div>

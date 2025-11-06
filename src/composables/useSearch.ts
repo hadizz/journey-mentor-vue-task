@@ -1,45 +1,58 @@
 import type { Country } from '@/models/Country'
-import { useSearchCacheStore } from '@/stores/searchCache'
+import { useCountriesFilterStore } from '@/stores/countriesFilter'
 import { computed, type Ref } from 'vue'
 import { useDebounce } from './useDebounce'
 
 export function useSearch(
   searchTerm: Ref<string>,
   countries: Ref<Country[]>,
+  region: Ref<string>,
   debounceMs: number = 300,
 ) {
   const { debouncedValue: debouncedSearchTerm } = useDebounce(searchTerm, debounceMs)
-  const searchCache = useSearchCacheStore()
+  const filterStore = useCountriesFilterStore()
 
   const filteredCountries = computed(() => {
     const allCountries = countries.value || []
+    const searchQuery = debouncedSearchTerm.value?.trim() || ''
+    const selectedRegion = region.value?.trim() || ''
 
-    if (!debouncedSearchTerm.value?.trim()) {
+    // If no filters are applied, return all countries (don't cache this)
+    if (!searchQuery && !selectedRegion) {
       return allCountries
     }
 
-    const searchQuery = debouncedSearchTerm.value.trim().toLowerCase()
-
-    const cachedIndices = searchCache.getCachedResult(searchQuery)
-    if (cachedIndices !== null) {
-      return cachedIndices.map((index) => allCountries[index]).filter(Boolean)
+    // Check cache first for filtered results
+    const cachedResults = filterStore.getCachedResult(searchQuery, selectedRegion)
+    if (cachedResults !== null) {
+      return cachedResults
     }
 
-    const matchingIndices: number[] = []
-    const filteredResults = allCountries.filter((country, index) => {
-      const nameMatch = country.name?.toLowerCase().includes(searchQuery)
-      const capitalMatch = country.capital?.toLowerCase().includes(searchQuery)
-      const regionMatch = country.region?.toLowerCase().includes(searchQuery)
-      const isMatch = nameMatch || capitalMatch || regionMatch
+    // First filter by region if selected
+    let regionFilteredCountries = allCountries
+    if (selectedRegion) {
+      regionFilteredCountries = allCountries.filter(
+        (country) => country.region?.toLowerCase() === selectedRegion.toLowerCase(),
+      )
+    }
 
-      if (isMatch) {
-        matchingIndices.push(index)
-      }
+    // If no search term, return region-filtered results
+    if (!searchQuery) {
+      filterStore.setCachedResult(searchQuery, selectedRegion, regionFilteredCountries)
+      return regionFilteredCountries
+    }
 
-      return isMatch
+    // Filter by search term
+    const searchQueryLower = searchQuery.toLowerCase()
+    const filteredResults = regionFilteredCountries.filter((country) => {
+      const nameMatch = country.name?.toLowerCase().includes(searchQueryLower)
+      const capitalMatch = country.capital?.toLowerCase().includes(searchQueryLower)
+      const regionMatch = country.region?.toLowerCase().includes(searchQueryLower)
+      return nameMatch || capitalMatch || regionMatch
     })
 
-    searchCache.setCachedResult(searchQuery, matchingIndices)
+    // Cache the results
+    filterStore.setCachedResult(searchQuery, selectedRegion, filteredResults)
 
     return filteredResults
   })
