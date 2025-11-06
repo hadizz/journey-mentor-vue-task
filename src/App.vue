@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import Navbar from './components/layout/Navbar.vue'
-
-const toggleDarkMode = () => {
-  console.log('toggleDarkMode')
-}
 </script>
 
 <template>
   <div>
-    <Navbar @toggle-dark-mode="toggleDarkMode" />
+    <Navbar />
     <RouterView />
   </div>
 </template>

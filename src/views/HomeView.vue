@@ -62,16 +62,19 @@ const {
 <style scoped>
 .container {
   padding: 0px;
+  color: var(--color-text);
 }
 
 .filters-container {
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 24px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
 }
 
 .search-field {
-  max-width: 400px;
+  flex: 1;
+  max-width: 480px;
 }
 
 .select-field {
@@ -80,36 +83,40 @@ const {
 
 .loading {
   text-align: center;
-  font-size: 1.2rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 40px 0;
+  font-weight: 300;
 }
 
 .error {
-  color: red;
+  color: var(--color-text);
   text-align: center;
-  margin: 20px 0;
+  margin: 40px 0;
 }
 
 .error button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: var(--color-background-soft);
+  color: var(--color-text);
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 300;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: all 0.3s ease;
 }
 
 .error button:hover {
-  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 .no-results {
   text-align: center;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 40px 0;
-  font-size: 1.1rem;
+  font-weight: 300;
 }
 
 ul {
@@ -117,8 +124,8 @@ ul {
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+  gap: 75px;
 }
 
 li {
@@ -137,23 +144,33 @@ li {
 }
 
 @media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .search-field {
+    max-width: 100%;
+  }
+
   ul {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 40px;
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   ul {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 60px;
   }
 }
 
 @media (min-width: 1025px) {
   ul {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+    gap: 75px;
   }
 }
 </style>

@@ -1,8 +1,22 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 80px 2rem 2rem;
-  font-weight: normal;
+  padding: 80px 1rem 2rem;
+  font-weight: 300;
+  background: var(--color-background);
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  #app {
+    padding: 80px 1rem 1rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  #app {
+    padding: 80px 2rem 2rem;
+  }
 }

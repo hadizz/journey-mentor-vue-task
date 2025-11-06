@@ -150,9 +150,8 @@ defineExpose({
 }
 
 .text-field__label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 600;
+  color: var(--color-text);
   margin-bottom: 4px;
   display: flex;
   align-items: center;
@@ -160,7 +159,7 @@ defineExpose({
 }
 
 .text-field__label--required {
-  color: #374151;
+  color: var(--color-text);
 }
 
 .text-field__required {
@@ -176,72 +175,73 @@ defineExpose({
 
 .text-field__input {
   width: 100%;
-  border: 1px solid #d1d5db;
+  border: none;
   border-radius: 6px;
-  background-color: #ffffff;
-  color: #374151;
-  font-size: 14px;
+  background-color: var(--color-background-soft);
+  color: var(--color-text);
+  font-weight: 300;
   line-height: 1.5;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease;
   outline: none;
+  box-shadow: 0 2px 8px var(--color-shadow);
 }
 
 /* -------------------------------------------------- SIZES -------------------------------------------------- */
 .text-field__input--small {
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: 8px 12px;
 }
 
 .text-field__input--medium {
-  padding: 8px 12px;
-  font-size: 14px;
+  padding: 12px 16px;
 }
 
 .text-field__input--large {
-  padding: 12px 16px;
-  font-size: 16px;
+  padding: 16px 20px;
 }
 
 /* -------------------------------------------------- STATES -------------------------------------------------- */
 .text-field__input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 .text-field__input:hover:not(:disabled):not(:readonly) {
-  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 .text-field__input--error {
-  border-color: #ef4444;
-  background-color: #fef2f2;
+  border: 2px solid #ef4444;
+  background-color: var(--color-background-soft);
 }
 
 .text-field__input--error:focus {
   border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .text-field__input--disabled {
-  background-color: #f9fafb;
-  color: #9ca3af;
+  background-color: var(--color-background-mute);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
-  border-color: #e5e7eb;
+  opacity: 0.6;
 }
 
 .text-field__input--readonly {
-  background-color: #f9fafb;
+  background-color: var(--color-background-mute);
   cursor: default;
 }
 
 .text-field__input::placeholder {
-  color: #9ca3af;
+  color: var(--color-input);
+  font-weight: 300;
 }
 
 .text-field__help {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   margin-top: 4px;
+  font-weight: 300;
 }
 
 .text-field__error {
@@ -251,41 +251,17 @@ defineExpose({
   display: flex;
   align-items: center;
   gap: 4px;
+  font-weight: 300;
 }
 
 .text-field__input:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--color-border-hover);
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .text-field__input {
     transition: none;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .text-field__label {
-    color: #f3f4f6;
-  }
-
-  .text-field__input {
-    background-color: #1f2937;
-    border-color: #4b5563;
-    color: #f3f4f6;
-  }
-
-  .text-field__input:focus {
-    border-color: #60a5fa;
-  }
-
-  .text-field__input--disabled {
-    background-color: #374151;
-    color: #6b7280;
-  }
-
-  .text-field__help {
-    color: #9ca3af;
   }
 }
 </style>

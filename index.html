@@ -5,6 +5,99 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Where in the world?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --dark-blue: hsl(209, 23%, 22%);
+        --very-dark-blue-bg: hsl(207, 26%, 17%);
+        --very-dark-blue-text: hsl(200, 15%, 8%);
+        --dark-gray: hsl(0, 0%, 52%);
+        --very-light-gray: hsl(0, 0%, 98%);
+        --white: hsl(0, 0%, 100%);
+
+        --shadow-light: rgba(0, 0, 0, 0.05);
+        --shadow-medium: rgba(0, 0, 0, 0.1);
+      }
+
+      /* ------------Light Theme------------ */
+      :root {
+        --color-background: var(--very-light-gray);
+        --color-background-soft: var(--white);
+        --color-background-mute: var(--white);
+        --color-border: rgba(0, 0, 0, 0.1);
+        --color-border-hover: rgba(0, 0, 0, 0.2);
+        --color-heading: var(--very-dark-blue-text);
+        --color-text: var(--very-dark-blue-text);
+        --color-text-secondary: var(--dark-gray);
+        --color-input: var(--dark-gray);
+        --color-shadow: var(--shadow-light);
+      }
+
+      /* ------------Dark Theme------------ */
+      .dark {
+        --color-background: var(--very-dark-blue-bg);
+        --color-background-soft: var(--dark-blue);
+        --color-background-mute: var(--dark-blue);
+        --color-border: rgba(255, 255, 255, 0.1);
+        --color-border-hover: rgba(255, 255, 255, 0.2);
+        --color-heading: var(--white);
+        --color-text: var(--white);
+        --color-text-secondary: var(--white);
+        --color-input: var(--white);
+        --color-shadow: rgba(0, 0, 0, 0.2);
+      }
+
+      body {
+        margin: 0;
+        color: var(--color-text);
+        background: var(--color-background);
+        font-family:
+          'Nunito Sans',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.6;
+        transition:
+          color 0.5s,
+          background-color 0.5s;
+      }
+
+      #app {
+        background: var(--color-background);
+        min-height: 100vh;
+      }
+    </style>
+    <script>
+      ;(function () {
+        try {
+          const savedMode = localStorage.getItem('darkMode')
+          let isDark = false
+
+          if (savedMode !== null) {
+            isDark = JSON.parse(savedMode)
+          } else {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          }
+
+          if (isDark) {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (e) {
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark')
+          }
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

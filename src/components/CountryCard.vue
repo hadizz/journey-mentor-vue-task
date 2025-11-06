@@ -19,47 +19,81 @@ defineProps<{
       <div class="flag-container">
         <img :src="flag" :alt="name ?? 'N/A'" />
       </div>
-      <div class="country-name">{{ name ?? 'N/A' }}</div>
-      <span class="country-name">population: {{ population ?? 'N/A' }}</span>
-      <span class="country-name">region: {{ region ?? 'N/A' }}</span>
-      <span class="country-name">capital: {{ capital ?? 'N/A' }}</span>
+      <div class="country-info">
+        <h3 class="country-name">{{ name ?? 'N/A' }}</h3>
+        <div class="country-details">
+          <p>
+            <strong>Population:</strong> {{ population?.toLocaleString?.() ?? population ?? 'N/A' }}
+          </p>
+          <p><strong>Region:</strong> {{ region ?? 'N/A' }}</p>
+          <p><strong>Capital:</strong> {{ capital ?? 'N/A' }}</p>
+        </div>
+      </div>
     </div>
   </RouterLink>
 </template>
 
 <style scoped>
 .country-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  display: block;
   text-decoration: none;
   color: inherit;
+  width: 100%;
+  max-width: 264px;
+  background-color: var(--color-background-soft);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: all 0.3s ease;
+}
+
+.country-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--color-shadow);
+}
+
+.country-card > div {
+  cursor: pointer;
 }
 
 .flag-container {
   position: relative;
   width: 100%;
-  max-width: 160px;
-  aspect-ratio: 4/3;
+  height: 160px;
   overflow: hidden;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: var(--color-background-mute);
 }
 
 .flag-container img {
-  max-width: 100%;
+  width: 100%;
   height: 100%;
-  object-fit: fill;
-  border-radius: 4px;
+  object-fit: cover;
+}
+
+.country-info {
+  padding: 24px;
 }
 
 .country-name {
-  margin-top: 8px;
-  font-weight: 500;
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-heading);
+}
+
+.country-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.country-details p {
+  margin: 0;
+  font-weight: 300;
+  color: var(--color-text);
+}
+
+.country-details strong {
+  font-weight: 600;
 }
 </style>
