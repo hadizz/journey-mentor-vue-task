@@ -64,6 +64,24 @@ export function useUrlSync(query: Ref<string>, region: Ref<string>, options: Url
     updateUrl(newQuery, newRegion)
   })
 
+  // Watch for route changes (browser back/forward navigation)
+  watch(
+    () => route.query,
+    (newQuery) => {
+      if (!isInitialized.value) return
+
+      const urlQuery = (newQuery.query as string) || ''
+      const urlRegion = (newQuery.region as string) || ''
+
+      // Only update if the URL values are different from current values
+      if (query.value !== urlQuery || region.value !== urlRegion) {
+        query.value = urlQuery
+        region.value = urlRegion
+      }
+    },
+    { deep: true },
+  )
+
   return {
     initializeFromUrl,
     isInitialized,
