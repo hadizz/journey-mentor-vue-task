@@ -9,7 +9,15 @@ export interface Country {
     official: string
     nativeName: any
   }
-  capital: string[]
+  capital: string
   region: string
   population: number
 }
+
+type Fields = keyof Country
+
+export interface GetAllCountriesParams {
+  fields?: Partial<Record<Fields, boolean>>
+}
+
+export type GetAllCountriesResponse = Country[]

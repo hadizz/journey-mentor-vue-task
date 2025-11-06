@@ -1,32 +1,28 @@
 <script setup lang="ts">
 import CountryCard from '@/components/CountryCard.vue'
+import { useCountries } from '@/composables/useCountries'
+import { useLoadMore } from '@/composables/useLoadMore'
 import type { Country } from '@/models/Country'
-import { ref } from 'vue'
 
-const countries = ref<Country[]>([])
-const error = ref<string | null>(null)
-const loading = ref(true)
+const PAGE_SIZE = 10
 
-const reloadPage = () => {
-  window.location.reload()
+const { data: countries, isLoading: loading, error, refetch } = useCountries()
+
+const {
+  visibleItems: visibleCountries,
+  hasMore,
+  loadMoreTrigger,
+} = useLoadMore<Country>({
+  items: countries,
+  pageSize: PAGE_SIZE,
+  isLoading: loading,
+  error,
+  rootMargin: '0px 0px 200px 0px',
+})
+
+const handleRetry = () => {
+  refetch()
 }
-
-fetch('https://restcountries.com/v3.1/all?fields=name,flags,capital,population,region')
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    return response.json()
-  })
-  .then((data) => {
-    countries.value = data
-    loading.value = false
-  })
-  .catch((err) => {
-    console.error('Error:', err)
-    error.value = err.message || 'Failed to fetch countries'
-    loading.value = false
-  })
 </script>
 
 <template>
@@ -34,11 +30,11 @@ fetch('https://restcountries.com/v3.1/all?fields=name,flags,capital,population,r
     <h1>Countries</h1>
     <div v-if="loading" class="loading">Loading countries...</div>
     <div v-else-if="error" class="error">
-      <p>Error loading countries: {{ error }}</p>
-      <button @click="reloadPage">Retry</button>
+      <p>Error loading countries: {{ error.message }}</p>
+      <button @click="handleRetry">Retry</button>
     </div>
     <ul v-else>
-      <li v-for="country in countries" :key="country.name.common">
+      <li v-for="country in visibleCountries" :key="country.name.common">
         <CountryCard
           :name="country.name.common"
           :flag="country.flags.png"
@@ -46,6 +42,9 @@ fetch('https://restcountries.com/v3.1/all?fields=name,flags,capital,population,r
           :region="country.region"
           :capital="country.capital[0]"
         />
+      </li>
+      <li v-if="hasMore" class="load-more-placeholder">
+        <div ref="loadMoreTrigger" class="load-more-trigger" aria-hidden="true"></div>
       </li>
     </ul>
   </div>
@@ -105,6 +104,16 @@ ul {
 li {
   display: flex;
   justify-content: center;
+}
+
+.load-more-placeholder {
+  display: flex;
+  justify-content: center;
+}
+
+.load-more-trigger {
+  width: 100%;
+  height: 1px;
 }
 
 @media (max-width: 768px) {
