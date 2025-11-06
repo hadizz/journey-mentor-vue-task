@@ -2,7 +2,7 @@ import type { Country, GetAllCountriesParams } from '@/models/Country'
 import { getAllCountriesServiceApi } from '@/services/countries'
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
 
-const defaultParams: Partial<GetAllCountriesParams> = {
+const defaultParams = {
   fields: {
     name: true,
     flags: true,
@@ -24,7 +24,6 @@ export function useCountries(params: Partial<GetAllCountriesParams> = defaultPar
   return useQuery({
     queryKey: COUNTRIES_QUERY_KEYS.list(params),
     queryFn: () => getAllCountriesServiceApi(params),
-    select: (res) => res.data,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 3,

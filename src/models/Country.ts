@@ -1,14 +1,6 @@
 export interface Country {
-  flags: {
-    png: string
-    svg: string
-    alt: string
-  }
-  name: {
-    common: string
-    official: string
-    nativeName: any
-  }
+  flag: string
+  name: string
   capital: string
   region: string
   population: number

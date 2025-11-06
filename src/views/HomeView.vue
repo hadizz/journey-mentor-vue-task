@@ -1,46 +1,49 @@
 <script setup lang="ts">
 import CountryCard from '@/components/CountryCard.vue'
-import { useCountries } from '@/composables/useCountries'
-import { useLoadMore } from '@/composables/useLoadMore'
-import type { Country } from '@/models/Country'
+import TextField from '@/components/ui/TextField.vue'
+import { useHomeComposable } from '@/composables/useHomeComposable'
 
 const PAGE_SIZE = 10
 
-const { data: countries, isLoading: loading, error, refetch } = useCountries()
-
 const {
-  visibleItems: visibleCountries,
+  searchTerm,
+  isSearching,
+  countries,
+  visibleCountries,
+  loading,
+  error,
   hasMore,
   loadMoreTrigger,
-} = useLoadMore<Country>({
-  items: countries,
-  pageSize: PAGE_SIZE,
-  isLoading: loading,
-  error,
-  rootMargin: '0px 0px 200px 0px',
-})
-
-const handleRetry = () => {
-  refetch()
-}
+  handleRetry,
+} = useHomeComposable(PAGE_SIZE)
 </script>
 
 <template>
   <div class="container">
-    <h1>Countries</h1>
+    <div>
+      <TextField
+        placeholder="Search for a country name, capital, or region"
+        v-model="searchTerm"
+        class="search-field"
+      />
+    </div>
     <div v-if="loading" class="loading">Loading countries...</div>
     <div v-else-if="error" class="error">
       <p>Error loading countries: {{ error.message }}</p>
       <button @click="handleRetry">Retry</button>
     </div>
+    <div v-else-if="isSearching" class="loading">Searching...</div>
+    <div v-else-if="searchTerm && countries.length === 0" class="no-results">
+      <p>No countries found matching "{{ searchTerm }}"</p>
+    </div>
     <ul v-else>
-      <li v-for="country in visibleCountries" :key="country.name.common">
+      <li v-for="country in visibleCountries" :key="country.name">
         <CountryCard
-          :name="country.name.common"
-          :flag="country.flags.png"
+          :name="country.name"
+          :flag="country.flag"
           :population="country.population"
           :region="country.region"
-          :capital="country.capital[0]"
+          :capital="country.capital"
         />
       </li>
       <li v-if="hasMore" class="load-more-placeholder">
@@ -54,7 +57,7 @@ const handleRetry = () => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0px;
 }
 
 .container h1 {
@@ -63,6 +66,11 @@ const handleRetry = () => {
   color: #2c3e50;
   font-size: 2.5rem;
   font-weight: 600;
+}
+
+.search-field {
+  max-width: 400px;
+  margin-bottom: 24px;
 }
 
 .loading {
@@ -90,6 +98,13 @@ const handleRetry = () => {
 
 .error button:hover {
   background-color: #0056b3;
+}
+
+.no-results {
+  text-align: center;
+  color: #666;
+  margin: 40px 0;
+  font-size: 1.1rem;
 }
 
 ul {
