@@ -1,5 +1,4 @@
 import type { Country } from '@/models/Country'
-import { useCountriesFilterStore } from '@/stores/countriesFilter'
 import { computed, onMounted, ref } from 'vue'
 import { useCountries } from './useCountries'
 import { useLoadMore } from './useLoadMore'
@@ -8,7 +7,7 @@ import { useUrlSync } from './useUrlSync'
 
 export function useHomeComposable(pageSize: number = 10) {
   const { data: countries, isLoading, error, refetch } = useCountries()
-  const filterStore = useCountriesFilterStore()
+  //   const filterStore = useCountriesFilterStore()
 
   const safeCountries = computed(() => countries.value || [])
 
@@ -18,7 +17,7 @@ export function useHomeComposable(pageSize: number = 10) {
   // Set up URL synchronization
   const { initializeFromUrl } = useUrlSync(searchTerm, region, {
     debounceMs: 300,
-    replaceHistory: false, // Create new history entries
+    replaceHistory: false,
   })
 
   const { filteredCountries, isSearching } = useSearch(searchTerm, safeCountries, region)

@@ -59,8 +59,6 @@ const isPlaceholder = computed(() => {
 })
 
 const toggleDropdown = () => {
-  console.log('toggleDropdown')
-
   if (props.disabled) return
   isOpen.value = !isOpen.value
   if (isOpen.value) {
@@ -71,13 +69,19 @@ const toggleDropdown = () => {
 }
 
 const selectOption = (option: SelectOption) => {
-  console.log('selectOption')
-
   if (props.disabled) return
   emit('update:modelValue', option.value)
   emit('change', option.value)
   isOpen.value = false
   focusedIndex.value = -1
+  selectRef.value?.focus()
+}
+
+const clearSelection = (event: Event) => {
+  event.stopPropagation()
+  if (props.disabled) return
+  emit('update:modelValue', '')
+  emit('change', '')
   selectRef.value?.focus()
 }
 
@@ -122,12 +126,17 @@ const handleKeydown = (event: KeyboardEvent) => {
         focusedIndex.value = -1
       }
       break
+    case 'Delete':
+    case 'Backspace':
+      if (!isOpen.value && selectedOption.value) {
+        event.preventDefault()
+        clearSelection(event)
+      }
+      break
   }
 }
 
 const handleBlur = (event: FocusEvent) => {
-  console.log('handleBlur')
-
   // Delay blur handling to allow click events to process first
   setTimeout(() => {
     // Check if the new focus target is within our component
@@ -141,8 +150,6 @@ const handleBlur = (event: FocusEvent) => {
 }
 
 const handleFocus = (event: FocusEvent) => {
-  console.log('handleFocus')
-
   emit('focus', event)
 }
 
@@ -215,22 +222,49 @@ defineExpose({
           {{ displayValue }}
         </span>
 
-        <div class="select__arrow" :class="{ 'select__arrow--open': isOpen }" aria-hidden="true">
-          <svg
-            width="12"
-            height="8"
-            viewBox="0 0 12 8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div class="select__actions">
+          <button
+            v-if="selectedOption && !disabled"
+            type="button"
+            class="select__clear"
+            aria-label="Clear selection"
+            @click="clearSelection"
+            @mousedown.prevent
           >
-            <path
-              d="M1 1.5L6 6.5L11 1.5"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+
+          <div class="select__arrow" :class="{ 'select__arrow--open': isOpen }" aria-hidden="true">
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 1.5L6 6.5L11 1.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -301,7 +335,7 @@ defineExpose({
 
 .select__trigger {
   width: 100%;
-  padding: 8px 16px 8px 12px;
+  padding: 8px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   background-color: #ffffff;
@@ -315,6 +349,7 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   min-height: 40px;
+  gap: 8px;
 }
 
 .select__trigger:focus {
@@ -348,6 +383,47 @@ defineExpose({
 
 .select__value--placeholder {
   color: #9ca3af;
+}
+
+.select__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.select__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  padding: 0;
+}
+
+.select__clear:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+}
+
+.select__clear:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+.select__trigger--disabled .select__clear {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.select__trigger--disabled .select__clear:hover {
+  background-color: transparent;
 }
 
 .select__arrow {
@@ -444,7 +520,8 @@ defineExpose({
 @media (prefers-reduced-motion: reduce) {
   .select__trigger,
   .select__arrow,
-  .select__option {
+  .select__option,
+  .select__clear {
     transition: none;
   }
 }
@@ -481,6 +558,15 @@ defineExpose({
 
   .select__trigger:focus .select__arrow {
     color: #60a5fa;
+  }
+
+  .select__clear {
+    color: #9ca3af;
+  }
+
+  .select__clear:hover {
+    color: #f3f4f6;
+    background-color: #374151;
   }
 
   .select__dropdown {
