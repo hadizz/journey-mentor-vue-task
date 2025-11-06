@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import CountryCard from '@/components/CountryCard.vue'
+import Select from '@/components/ui/Select.vue'
 import TextField from '@/components/ui/TextField.vue'
 import { useHomeComposable } from '@/composables/useHomeComposable'
+import { ref } from 'vue'
 
 const PAGE_SIZE = 10
 
@@ -16,15 +18,26 @@ const {
   loadMoreTrigger,
   handleRetry,
 } = useHomeComposable(PAGE_SIZE)
+
+const region = ref('')
+const regions = ref([
+  { value: 'africa', label: 'Africa' },
+  { value: 'asia', label: 'Asia' },
+  { value: 'europe', label: 'Europe' },
+  { value: 'north-america', label: 'North America' },
+  { value: 'south-america', label: 'South America' },
+])
 </script>
 
 <template>
   <div class="container">
-    <div>
-      <TextField
-        placeholder="Search for a country name, capital, or region"
-        v-model="searchTerm"
-        class="search-field"
+    <div class="filters-container">
+      <TextField placeholder="Search for a country..." v-model="searchTerm" class="search-field" />
+      <Select
+        placeholder="Select a region"
+        v-model="region"
+        class="select-field"
+        :options="regions"
       />
     </div>
     <div v-if="loading" class="loading">Loading countries...</div>
@@ -58,9 +71,18 @@ const {
   padding: 0px;
 }
 
+.filters-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
 .search-field {
   max-width: 400px;
-  margin-bottom: 24px;
+}
+
+.select-field {
+  max-width: 200px;
 }
 
 .loading {

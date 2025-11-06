@@ -7,6 +7,6 @@ export const formatCountry = (country: any): Country => {
     capital: country.capital[0],
     region: country.region,
     population: country.population,
-    flag: country.flags.svg,
+    flag: country.flags.png,
   }
 }

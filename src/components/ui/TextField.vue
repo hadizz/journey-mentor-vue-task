@@ -40,7 +40,6 @@ const inputId = computed(() => props.id || `input-${Math.random().toString(36).s
 
 const hasError = computed(() => Boolean(props.error))
 
-// Compute input classes
 const inputClasses = computed(() => [
   'text-field__input',
   `text-field__input--${props.size}`,
@@ -51,7 +50,6 @@ const inputClasses = computed(() => [
   },
 ])
 
-// Handle input events
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
   const value = props.type === 'number' ? Number(target.value) : target.value
@@ -75,17 +73,14 @@ const handleKeyup = (event: KeyboardEvent) => {
   emit('keyup', event)
 }
 
-// Focus method for parent components
 const focus = () => {
   inputRef.value?.focus()
 }
 
-// Blur method for parent components
 const blur = () => {
   inputRef.value?.blur()
 }
 
-// Expose methods to parent
 defineExpose({
   focus,
   blur,
@@ -95,7 +90,6 @@ defineExpose({
 
 <template>
   <div class="text-field">
-    <!-- Label -->
     <label
       v-if="label"
       :for="inputId"
@@ -106,7 +100,6 @@ defineExpose({
       <span v-if="required" class="text-field__required" aria-label="required">*</span>
     </label>
 
-    <!-- Input wrapper -->
     <div class="text-field__wrapper">
       <input
         :id="inputId"
@@ -132,12 +125,10 @@ defineExpose({
       />
     </div>
 
-    <!-- Help text -->
     <div v-if="helpText && !error" :id="`${inputId}-help`" class="text-field__help">
       {{ helpText }}
     </div>
 
-    <!-- Error message -->
     <div
       v-if="error"
       :id="`${inputId}-error`"
